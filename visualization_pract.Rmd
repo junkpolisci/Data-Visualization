@@ -1,0 +1,36 @@
+---
+title: "Visualization Practice"
+author: "Christopher Junk"
+date: "February 4, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+First, I need to load in the sample data. 
+```{r}
+install.packages("gapminder")
+library(gapminder)
+library(ggplot2)
+```
+```{r}
+gapminder
+```
+
+Assign the data to an object, p. 
+```{r}
+p <- ggplot(data = gapminder)
+```
+
+Need to tell ggplot which variable takes x and y. 
+```{r}
+p <-  ggplot(data = gapminder, 
+             mapping = aes(x = gdpPercap, #This argument links variables to components of the plot. 
+                           y = lifeExp))
+p
+str(p)
+p + geom_point() # Up to now p was just a description of what goes where in the plot, the geom_ argument gives the plot its form. In this case it is a scatter plot. 
+```
+
