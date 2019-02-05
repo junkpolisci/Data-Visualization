@@ -34,3 +34,166 @@ str(p)
 p + geom_point() # Up to now p was just a description of what goes where in the plot, the geom_ argument gives the plot its form. In this case it is a scatter plot. 
 ```
 
+Now try the smoothed time series plot. 
+```{r}
+p + geom_smooth()
+```
+Now try the smoothed line with the dots as well. 
+```{r}
+p + geom_smooth() +
+    geom_point()
+```
+
+Now try the linear model instead of the gam for smoothing. 
+```{r}
+p + geom_smooth(method = "lm") +
+    geom_point()
+```
+
+Now change the X axis scale to natural log. 
+```{r}
+p + geom_smooth(method = "lm") +
+    geom_point() + 
+  scale_x_log10()
+```
+
+Look at the scales library and change the axis tick labels. 
+```{r}
+library(scales)
+p + geom_smooth(method = "lm") +
+    geom_point() + 
+  scale_x_log10(labels = scales::dollar) #thelibrary::thefunction
+```
+
+Now let's try some options in the mapping argument. 
+```{r}
+p <- ggplot(data = gapminder, 
+            mapping = aes(x = gdpPercap,
+                         y = lifeExp, 
+                         color = continent))
+
+p + geom_point() +
+    geom_smooth(method = "loess") + 
+    scale_x_log10(labels = scales::dollar)
+```
+
+Now, get rid of that color and make all points purple. 
+```{r}
+p <- ggplot(data = gapminder, 
+            mapping = aes(x = gdpPercap,
+                         y = lifeExp,
+                         color = continent))
+
+p + geom_point(color = "purple") +
+    geom_smooth(method = "loess") + 
+    scale_x_log10(labels = scales::dollar)
+```
+
+
+Now adjust the line size and point size. 
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp)) 
+p + geom_point(alpha = 0.3) +
+    geom_smooth(color = "orange", se = FALSE, size = 8, method = "lm") +
+    scale_x_log10()
+```
+
+
+Let's add some titles and axis labels. 
+```{r}
+p + geom_point(alpha = 0.3) +
+    geom_smooth(method = "gam") +
+    scale_x_log10(labels = scales::dollar) +
+    labs(x = "GDP Per Capita", y = "Life Expectancy in Years",
+         title = "Economic Growth and Life Expectancy",
+         subtitle = "Data points are country-years",
+         caption = "Source: Gapminder.")
+```
+
+Now they recreate what the first code would have been had they not intentionally made the purple mistake. 
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp,
+                          color = continent))
+p + geom_point() +
+    geom_smooth(method = "loess") +
+    scale_x_log10()
+```
+
+Fill in the confidence intervals. 
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp,
+                          color = continent, 
+                          fill = continent))
+p + geom_point() +
+    geom_smooth(method = "loess") +
+    scale_x_log10()
+```
+
+Break down the code: change aesthetics in each geom. 
+```{r}
+p <- ggplot(data = gapminder, mapping = aes(x = gdpPercap, y = lifeExp))
+p + geom_point(mapping = aes(color = continent)) +
+    geom_smooth(method = "loess") +
+    scale_x_log10()
+```
+
+Create a color gradient for a continuous variable: logged population total. 
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp))
+p + geom_point(mapping = aes(color = log(pop))) +
+    scale_x_log10()
+```
+
+Practice saving. 
+```{r, fig.width=12, fig.height=9}
+p_out <- p + geom_point() +
+    geom_smooth(method = "loess") +
+    scale_x_log10()
+
+ggsave("my_figure.pdf", plot = p_out)
+```
+
+Play around with their suggestions. 
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap,
+                          y = lifeExp))
+p + geom_smooth() + 
+    geom_point() #The first geom is on the bottom, and it layers on top. 
+```
+
+Change the x to population. 
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = pop,
+                          y = lifeExp))
+p + geom_smooth() + 
+    geom_point()
+
+p + geom_point() +
+    geom_point() + 
+    scale_x_sqrt() #this is nonsense, but I understand the way scale changes works now. 
+
+p <- ggplot(data = gapminder,
+            mapping = aes(x = pop,
+                          y = lifeExp,
+                          color = year))
+p + geom_point() + 
+    geom_smooth()
+
+p <- ggplot(data = gapminder,
+            mapping = aes(x = pop,
+                          y = lifeExp,
+                          color = factor(year)))
+p + geom_point() + 
+    geom_smooth()
+```
+
